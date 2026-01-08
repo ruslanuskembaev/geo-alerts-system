@@ -1,10 +1,17 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
+	"github.com/ruslanuskembaev/geo-alerts-system/internal/config"
 )
 
 func main() {
+	cfg := config.Load()
+
+	fmt.Printf("Starting server on port %s\n", cfg.ServerPort)
+
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
@@ -13,5 +20,5 @@ func main() {
 		})
 	})
 
-	r.Run(":8080")
+	r.Run(":" + cfg.ServerPort)
 }
