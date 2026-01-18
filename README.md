@@ -52,8 +52,10 @@ Unit-тесты лежат в `tests/unit`.
 ```
 export TEST_DB_DSN="postgres://geoalerts:password@localhost:5432/geoalerts_db?sslmode=disable"
 export TEST_REDIS_ADDR="localhost:6379"
+export TEST_REDIS_DB="1"
 go test -tags=integration ./tests/integration
 ```
+Если у вас локальный Postgres слушает `localhost:5432`, тесты могут подключиться к нему вместо контейнера. В этом случае остановите локальный Postgres, смените порт в `docker-compose.yml` или укажите IP машины вместо `localhost` в `TEST_DB_DSN` (например, `192.168.1.10`).
 
 ## Webhook mock + ngrok
 1) Запустите заглушку:
