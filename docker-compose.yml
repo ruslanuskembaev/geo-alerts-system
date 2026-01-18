@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: geoalerts
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: geoalerts_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  webhook-mock:
+    image: golang:1.24
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: ["go", "run", "./cmd/webhook-mock"]
+    ports:
+      - "9090:9090"
+
+  app:
+    build: .
+    environment:
+      SERVER_PORT: "8080"
+      API_KEY: "dev_api_key_12345"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      DB_USER: "geoalerts"
+      DB_PASSWORD: "password"
+      DB_NAME: "geoalerts_db"
+      DB_SSLMODE: "disable"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      WEBHOOK_URL: "http://webhook-mock:9090/webhook"
+      WEBHOOK_RETRY_ATTEMPTS: "3"
+      WEBHOOK_RETRY_DELAY_SECONDS: "5"
+      STATS_TIME_WINDOW_MINUTES: "60"
+      CACHE_TTL_SECONDS: "300"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+      - webhook-mock
+
+volumes:
+  db_data:

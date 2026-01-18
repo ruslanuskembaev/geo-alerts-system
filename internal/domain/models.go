@@ -47,14 +47,43 @@ type UpdateIncidentRequest struct {
 
 // LocationCheckRequest запрос на проверку локации
 type LocationCheckRequest struct {
-	UserID    string  `json:"user_id" binding:"required"`
+	UserID    string  `json:"user_id" binding:"required,min=1,max=100"`
 	Latitude  float64 `json:"latitude" binding:"required,min=-90,max=90"`
 	Longitude float64 `json:"longitude" binding:"required,min=-180,max=180"`
 }
 
+// NearbyIncident инцидент рядом с локацией
+type NearbyIncident struct {
+	ID             string   `json:"id"`
+	Title          string   `json:"title"`
+	Severity       Severity `json:"severity"`
+	Latitude       float64  `json:"latitude"`
+	Longitude      float64  `json:"longitude"`
+	RadiusMeters   int      `json:"radius_meters"`
+	DistanceMeters float64  `json:"distance_meters"`
+}
+
 // LocationCheckResponse ответ на проверку локации
 type LocationCheckResponse struct {
-	CheckID        string    `json:"check_id"`
+	CheckID        string           `json:"check_id"`
+	IsInDangerZone bool             `json:"is_in_danger_zone"`
+	CheckedAt      time.Time        `json:"checked_at"`
+	Incidents      []NearbyIncident `json:"incidents"`
+}
+
+// LocationCheck запись о проверке локации
+type LocationCheck struct {
+	ID             string    `json:"id"`
+	UserID         string    `json:"user_id"`
+	Latitude       float64   `json:"latitude"`
+	Longitude      float64   `json:"longitude"`
 	IsInDangerZone bool      `json:"is_in_danger_zone"`
 	CheckedAt      time.Time `json:"checked_at"`
+}
+
+// IncidentStats статистика по инциденту
+type IncidentStats struct {
+	IncidentID string `json:"incident_id"`
+	Title      string `json:"title"`
+	UserCount  int    `json:"user_count"`
 }
